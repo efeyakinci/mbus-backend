@@ -1,0 +1,47 @@
+{
+    "routeColors": {
+        "BB": "0xFF007f00",
+        "CN": "0xFF9933ff",
+        "CS": "0xFF3400ff",
+        "CSX": "0xFF9b9a6d",
+        "DD": "0xFF808000",
+        "MX": "0xFFd86018",
+        "NE": "0xFF1cbd11",
+        "NW": "0xFF990000",
+        "NX": "0xFF993300",
+        "OS": "0xFFff9900",
+        "WS": "0xFF9a3324",
+        "WX": "0xFF9a3324"
+    },
+    "routeIdToName": {
+        "BB": "Bursley-Baits",
+        "CN": "Commuter North",
+        "CS": "Commuter South",
+        "CSX": "Crisler Express",
+        "DD": "Diag-to-Diag",
+        "MX": "Med Express",
+        "NE": "Northeast Shuttle",
+        "NW": "Northwood",
+        "NX": "Northwood Express",
+        "OS": "Oxford Shuttle",
+        "WS": "Wall Street - NIB",
+        "WX": "Wall Street Express"
+    },
+    "routeImages": {
+        "BB": "bus_BB.png",
+        "CN": "bus_CN.png",
+        "CS": "bus_CS.png",
+        "CSX": "bus_CSX.png",
+        "DD": "bus_DD.png",
+        "MX": "bus_MX.png",
+        "NE": "bus_NE.png",
+        "NW": "bus_NW.png",
+        "NX": "bus_NX.png",
+        "OS": "bus_OS.png",
+        "WS": "bus_WS.png",
+        "WX": "bus_WX.png"
+    },
+    "metadata": {
+        "version": 1
+    }
+}

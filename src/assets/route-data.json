@@ -1,0 +1,64 @@
+{
+  "routeColorsRegular": {
+    "BB": "0xFF007f00",
+    "CN": "0xFF9933ff",
+    "CS": "0xFF3400ff",
+    "CSX": "0xFF9b9a6d",
+    "DD": "0xFF808000",
+    "MX": "0xFFd86018",
+    "NE": "0xFF1cbd11",
+    "NES": "0xFF6ffc03",
+    "NW": "0xFF990000",
+    "NX": "0xFF993300",
+    "OS": "0xFFff9900",
+    "WS": "0xFF9a3324",
+    "WX": "0xFF9a3324"
+  },
+  "routeColorsColorblind": {
+    "BB": "0xFF004949",
+    "CN": "0xFF24ff24",
+    "CS": "0xFFdb6d00",
+    "CSX": "0xFF924900",
+    "DD": "0xFF920000",
+    "MX": "0xFFb6dbff",
+    "NE": "0xFF6db6ff",
+    "NES": "0xFF098200",
+    "NW": "0xFFb66dff",
+    "NX": "0xFF006ddb",
+    "OS": "0xFF490092",
+    "WS": "0xFFffb6db",
+    "WX": "0xFFff6db6"
+  },
+  "routeImages": {
+    "BB": "bus_BB.png",
+    "CN": "bus_CN.png",
+    "CS": "bus_CS.png",
+    "CSX": "bus_CSX.png",
+    "DD": "bus_DD.png",
+    "MX": "bus_MX.png",
+    "NE": "bus_NE.png",
+    "NES": "bus_NES.png",
+    "NW": "bus_NW.png",
+    "NX": "bus_NX.png",
+    "OS": "bus_OS.png",
+    "WS": "bus_WS.png",
+    "WX": "bus_WX.png"
+  },
+  "routeIdToName": {
+    "BB": "Bursley-Baits",
+    "CN": "Commuter North",
+    "CS": "Commuter South",
+    "CSX": "Crisler Express",
+    "DD": "Diag-to-Diag",
+    "MX": "Med Express",
+    "NE": "Northeast Shuttle",
+    "NW": "Northwood",
+    "NX": "Northwood Express",
+    "OS": "Oxford Shuttle",
+    "WS": "Wall Street - NIB",
+    "WX": "Wall Street Express"
+  },
+  "metadata": {
+    "version": 3
+  }
+}
