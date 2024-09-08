@@ -1,0 +1,70 @@
+busImageRoot: "assets/regular/"
+
+routes:
+  BB:
+    name: "Bursley-Baits"
+    regularColor: "0xFF007f00"
+    colorblindColor: "0xFF004949"
+    image: "bus_BB.png"
+  CN:
+    name: "Commuter North"
+    regularColor: "0xFF9933ff"
+    colorblindColor: "0xFF24ff24"
+    image: "bus_CN.png"
+  CS:
+    name: "Commuter South"
+    regularColor: "0xFF3400ff"
+    colorblindColor: "0xFFdb6d00"
+    image: "bus_CS.png"
+  CSX:
+    name: "Crisler Express"
+    regularColor: "0xFF9b9a6d"
+    colorblindColor: "0xFF924900"
+    image: "bus_CSX.png"
+  DD:
+    name: "Diag-to-Diag"
+    regularColor: "0xFF808000"
+    colorblindColor: "0xFF920000"
+    image: "bus_DD.png"
+  MX:
+    name: "Med Express"
+    regularColor: "0xFFd86018"
+    colorblindColor: "0xFFb6dbff"
+    image: "bus_MX.png"
+  NE:
+    name: "Northeast Shuttle"
+    regularColor: "0xFF1cbd11"
+    colorblindColor: "0xFF6db6ff"
+    image: "bus_NE.png"
+  NES:
+    name: "Northwood Express Shuttle"
+    regularColor: "0xFF6ffc03"
+    colorblindColor: "0xFF098200"
+    image: "bus_NES.png"
+  NW:
+    name: "Northwood"
+    regularColor: "0xFF990000"
+    colorblindColor: "0xFFb66dff"
+    image: "bus_NW.png"
+  NX:
+    name: "Northwood Express"
+    regularColor: "0xFF993300"
+    colorblindColor: "0xFF006ddb"
+    image: "bus_NX.png"
+  OS:
+    name: "Oxford Shuttle"
+    regularColor: "0xFFff9900"
+    colorblindColor: "0xFF490092"
+    image: "bus_OS.png"
+  WS:
+    name: "Wall Street - NIB"
+    regularColor: "0xFF9a3324"
+    colorblindColor: "0xFFffb6db"
+    image: "bus_WS.png"
+  WX:
+    name: "Wall Street Express"
+    regularColor: "0xFF9a3324"
+    colorblindColor: "0xFFff6db6"
+    image: "bus_WX.png"
+
+version: 3
