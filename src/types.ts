@@ -1,7 +1,3 @@
-type Route = {
+export interface Route {
     rt: string
 }
-
-export {
-    Route
-};
