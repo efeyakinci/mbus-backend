@@ -43,6 +43,7 @@ class BusState {
 
   private async refreshBusPositions() {
     this.positions.buses = await fetchVehicles([...ROUTE_SHORTCODES]);
+    console.log(this.positions.buses);
   }
 
   private async refreshSelectableRoutes() {
