@@ -70,19 +70,22 @@ export function getStartupMessages(req: Request, res: Response) {
 
 export async function getStopPredictions(req: Request, res: Response) {
   const { stopId } = req.params;
-  const data = await fetchStopPredictions(stopId, [...ROUTE_SHORTCODES]);
-  res.json(data);
+  const result = await fetchStopPredictions(stopId, [...ROUTE_SHORTCODES]);
+  if (!result.ok) {
+    res.sendStatus(503);
+    return;
+  }
+  res.json(result.value.data);
 }
 
 export async function getBusPredictions(req: Request, res: Response) {
   const { busId } = req.params;
-  try {
-    const data = await fetchBusPredictions(busId);
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.sendStatus(500);
+  const result = await fetchBusPredictions(busId);
+  if (!result.ok) {
+    res.sendStatus(503);
+    return;
   }
+  res.json(result.value.data);
 }
 
 export function getUpdateNotes(req: Request, res: Response) {

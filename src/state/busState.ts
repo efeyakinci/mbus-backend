@@ -42,25 +42,25 @@ class BusState {
   }
 
   private async refreshBusPositions() {
-    this.positions.buses = await fetchVehicles([...ROUTE_SHORTCODES]);
-    console.log(this.positions.buses);
+    const res = await fetchVehicles([...ROUTE_SHORTCODES]);
+    if (!res.ok) return;
+    this.positions.buses = res.value;
   }
 
   private async refreshSelectableRoutes() {
-    const data = await fetchSelectableRoutes();
+    const selRes = await fetchSelectableRoutes();
+    if (!selRes.ok) return;
+    const data = selRes.value.data;
     this.routeSelections = data;
 
-    try {
-      const routes = data["bustime-response"].routes as { rt: string }[];
-      await Promise.all(
-        routes.map(async (r) => {
-          const patterns = await fetchPatterns(r.rt);
-          this.cachedRoutes[r.rt] = patterns["bustime-response"].ptr;
-        }),
-      );
-    } catch (_) {
-      // Intentionally allow failure to propagate on next interval.
-    }
+    const routes = data["bustime-response"].routes as { rt: string }[];
+    const patternResults = await Promise.all(routes.map((r) => fetchPatterns(r.rt)));
+    patternResults.forEach((pr, idx) => {
+      if (pr.ok) {
+        const rt = routes[idx].rt;
+        this.cachedRoutes[rt] = pr.value.data["bustime-response"].ptr;
+      }
+    });
   }
 }
 

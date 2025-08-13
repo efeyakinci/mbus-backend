@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_KEY } from "@/config/env";
+import { runExternal, type Result } from "@/api/external";
 
 export const mbusClient = axios.create({
   baseURL: "https://mbus.ltp.umich.edu/bustime/api/v3/",
@@ -7,6 +8,7 @@ export const mbusClient = axios.create({
     key: API_KEY,
     format: "json",
   },
+  timeout: 5_000,
 });
 
 /**
@@ -36,8 +38,8 @@ export interface BustimeResponse<T> {
  * per call and merge the results. The public function signature remains the
  * same and the batching is transparent to callers.
  */
-export async function fetchVehicles(routes: string[]): Promise<Vehicle[]> {
-  if (routes.length === 0) return [];
+export async function fetchVehicles(routes: string[]): Promise<Result<Vehicle[]>> {
+  if (routes.length === 0) return { ok: true, value: [] };
 
   const MAX_SHORTCODES_PER_REQUEST = 5;
   const chunks: string[][] = [];
@@ -45,82 +47,96 @@ export async function fetchVehicles(routes: string[]): Promise<Vehicle[]> {
     chunks.push(routes.slice(i, i + MAX_SHORTCODES_PER_REQUEST));
   }
 
-  const responses = await Promise.all(
+  const batched = await Promise.all(
     chunks.map((chunk) =>
-      mbusClient.get<BustimeResponse<{ vehicle: Vehicle[] }>>("/getvehicles", {
-        params: {
-          requestType: "getvehicles",
-          rt: chunk.join(","),
-        },
-      }),
+      runExternal(
+        () =>
+          mbusClient.get<BustimeResponse<{ vehicle: Vehicle[] }>>("/getvehicles", {
+            params: { requestType: "getvehicles", rt: chunk.join(",") },
+          }),
+        { op: "getvehicles", detail: { rt: chunk.join(",") } },
+      ),
     ),
   );
 
   const vehicles: Vehicle[] = [];
-  for (const res of responses) {
-    const v = res.data["bustime-response"].vehicle ?? [];
+  for (const r of batched) {
+    if (!r.ok) return r;
+    const v = r.value.data["bustime-response"].vehicle ?? [];
     vehicles.push(...v);
   }
-  return vehicles;
+  return { ok: true, value: vehicles };
 }
 
 export async function fetchStopPredictions(stopId: string, routes: string[]) {
-  const res = await mbusClient.get(
-    "/getpredictions",
-    {
-      params: {
-        requestType: "getpredictions",
-        locale: "en",
-        stpid: stopId,
-        rt: routes.join(","),
-        rtpidatafeed: "bustime",
-        top: 4,
-      },
-    },
+  return runExternal(
+    () =>
+      mbusClient.get(
+        "/getpredictions",
+        {
+          params: {
+            requestType: "getpredictions",
+            locale: "en",
+            stpid: stopId,
+            rt: routes.join(","),
+            rtpidatafeed: "bustime",
+            top: 4,
+          },
+        },
+      ),
+    { op: "getpredictions", detail: { stpid: stopId } },
   );
-  return res.data;
 }
 
 export async function fetchBusPredictions(busId: string) {
-  const res = await mbusClient.get(
-    "/getpredictions",
-    {
-      params: {
-        requestType: "getpredictions",
-        locale: "en",
-        vid: busId,
-        top: 4,
-        tmres: "s",
-        rtpidatafeed: "bustime",
-      },
-    },
+  return runExternal(
+    () =>
+      mbusClient.get(
+        "/getpredictions",
+        {
+          params: {
+            requestType: "getpredictions",
+            locale: "en",
+            vid: busId,
+            top: 4,
+            tmres: "s",
+            rtpidatafeed: "bustime",
+          },
+        },
+      ),
+    { op: "getpredictions", detail: { vid: busId } },
   );
-  return res.data;
 }
 
 export async function fetchSelectableRoutes() {
-  const res = await mbusClient.get(
-    "/getroutes",
-    {
-      params: {
-        requestType: "getroutes",
-        locale: "en",
-      },
-    },
+  return runExternal(
+    () =>
+      mbusClient.get(
+        "/getroutes",
+        {
+          params: {
+            requestType: "getroutes",
+            locale: "en",
+          },
+        },
+      ),
+    { op: "getroutes" },
   );
-  return res.data;
 }
 
 export async function fetchPatterns(rt: string) {
-  const res = await mbusClient.get(
-    "/getpatterns",
-    {
-      params: {
-        requestType: "getpatterns",
-        rtpidatafeed: "bustime",
-        rt,
-      },
-    },
+  return runExternal(
+    () =>
+      mbusClient.get(
+        "/getpatterns",
+        {
+          params: {
+            requestType: "getpatterns",
+            rtpidatafeed: "bustime",
+            rt,
+          },
+        },
+      ),
+    { op: "getpatterns", detail: { rt } },
   );
-  return res.data;
 } 
