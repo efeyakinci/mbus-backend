@@ -1,0 +1,31 @@
+{
+  "vehicleIconVariant": "grad-24",
+  "announcements": [
+    {
+      "id": "gradamatation",
+      "title": "Congrats Grads 🥳",
+      "body": "Congrats to everyone who is gradamatating! Enjoy some grad hats on the buses, and don't forget to celebrate!",
+      "minBuild": 0,
+      "maxBuild": 999
+    },
+    {
+      "id": "update-notes-12",
+      "title": "Update Notes!",
+      "body": "- ·Fixed Northeast Shuttle Icons\n- ·Working bus icons for Northeast Shuttle\n- ·General improvements",
+      "minBuild": 12,
+      "maxBuild": 12
+    }
+  ],
+  "legacy": {
+    "startupMessage": {
+      "id": "gradamatation",
+      "title": "Congrats Grads 🥳",
+      "message": "Congrats to everyone who is gradamatating! Enjoy some grad hats on the buses, and don't forget to celebrate!",
+      "buildVersion": "99"
+    },
+    "updateNotes": {
+      "message": "- ·Fixed Northeast Shuttle Icons\n- ·Working bus icons for Northeast Shuttle\n- ·General improvements",
+      "version": "7"
+    }
+  }
+}

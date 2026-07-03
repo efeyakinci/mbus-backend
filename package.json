@@ -4,19 +4,22 @@
   "description": "",
   "type": "module",
   "main": "src/app.ts",
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
-    "start": "tsx src/app.ts"
+    "start": "node --env-file-if-exists=.env src/app.ts",
+    "typecheck": "tsc"
   },
   "author": "Efe Akinci",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.7.2",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "tsx": "^4.11.0"
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.0.0"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/node": "^20.12.12"
+    "@types/express": "^5.0.0",
+    "@types/node": "^26.0.0",
+    "typescript": "^5.9.0"
   }
 }
