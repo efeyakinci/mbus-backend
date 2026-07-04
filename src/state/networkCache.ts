@@ -6,6 +6,7 @@ import {
 import { toNetwork } from "../bustime/mapping.ts";
 import { catalogRouteIds } from "../catalog.ts";
 import type { Network } from "../domain.ts";
+import { logger } from "../logger.ts";
 import { startPolling } from "./poller.ts";
 
 class NetworkCache {
@@ -14,28 +15,35 @@ class NetworkCache {
   legacyPatterns: Record<string, unknown> = {};
 
   start(): void {
-    startPolling(() => this.refresh(), 60_000);
+    startPolling("network", () => this.refresh(), 60_000);
   }
 
   private async refresh(): Promise<void> {
-    const routesRes = await fetchRoutes();
-    if (!routesRes.ok) return;
-    const payload = routesRes.value;
-    // A bad key or upstream error still returns HTTP 200, with an error
-    // payload instead of routes.
+    const payload = await fetchRoutes();
     const liveRoutes = payload["bustime-response"].routes;
-    if (!Array.isArray(liveRoutes)) return;
+    if (!liveRoutes) {
+      // A bad key or upstream error still returns HTTP 200, with an error
+      // payload instead of routes.
+      throw new Error("getroutes returned no routes");
+    }
     this.legacyRouteSelections = payload;
 
     const liveIds = liveRoutes.map((r) => r.rt);
     const pollIds = [...new Set([...liveIds, ...catalogRouteIds])];
-    const results = await Promise.all(
-      pollIds.map(async (id) => ({ id, res: await fetchPatterns(id) })),
+    const results = await Promise.allSettled(
+      pollIds.map(async (id) => ({
+        id,
+        ptr: (await fetchPatterns(id))["bustime-response"].ptr,
+      })),
     );
 
     const patterns: Record<string, BustimePattern[]> = {};
-    for (const { id, res } of results) {
-      const ptr = res.ok ? res.value["bustime-response"].ptr : undefined;
+    for (const result of results) {
+      if (result.status === "rejected") {
+        logger.warn({ err: result.reason }, "pattern refresh failed");
+        continue;
+      }
+      const { id, ptr } = result.value;
       if (!ptr) continue;
       patterns[id] = ptr;
       if (liveIds.includes(id)) this.legacyPatterns[id] = ptr;

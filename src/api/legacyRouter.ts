@@ -1,11 +1,9 @@
 // Frozen wire format for app builds <= 12, which parse raw BusTime payloads.
 // Serves from the same caches as v4. Delete once those builds are gone.
-import { Router, type Request, type Response } from "express";
+import { Router, type Request } from "express";
 import {
   fetchStopPredictions,
   fetchVehiclePredictions,
-  type BustimePredictionsPayload,
-  type Result,
 } from "../bustime/client.ts";
 import { catalogRouteIds } from "../catalog.ts";
 import routeData from "../assets/route-data.json" with { type: "json" };
@@ -14,17 +12,6 @@ import { networkCache } from "../state/networkCache.ts";
 import { vehicleCache } from "../state/vehicleCache.ts";
 import { feedbackHandler, feedbackLimiter } from "./feedback.ts";
 import { sendVehicleIcon } from "./vehicleIcons.ts";
-
-function passthrough(
-  result: Result<BustimePredictionsPayload>,
-  res: Response,
-) {
-  if (!result.ok) {
-    res.sendStatus(503);
-    return;
-  }
-  res.json(result.value);
-}
 
 export const legacyRouter = Router();
 
@@ -74,17 +61,14 @@ legacyRouter.get("/getUpdateNotes", (req, res) => {
 legacyRouter.get(
   "/getStopPredictions/:stopId",
   async (req: Request<{ stopId: string }>, res) => {
-    passthrough(
-      await fetchStopPredictions(req.params.stopId, catalogRouteIds),
-      res,
-    );
+    res.json(await fetchStopPredictions(req.params.stopId, catalogRouteIds));
   },
 );
 
 legacyRouter.get(
   "/getBusPredictions/:busId",
   async (req: Request<{ busId: string }>, res) => {
-    passthrough(await fetchVehiclePredictions(req.params.busId), res);
+    res.json(await fetchVehiclePredictions(req.params.busId));
   },
 );
 

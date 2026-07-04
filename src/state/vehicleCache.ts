@@ -9,14 +9,13 @@ class VehicleCache {
   legacyPositions: { buses: BustimeVehicle[] } = { buses: [] };
 
   start(): void {
-    startPolling(() => this.refresh(), 7_500);
+    startPolling("vehicles", () => this.refresh(), 7_500);
   }
 
   private async refresh(): Promise<void> {
-    const res = await fetchVehicles(catalogRouteIds);
-    if (!res.ok) return;
-    this.legacyPositions.buses = res.value;
-    this.vehicles = res.value.map(toVehicle);
+    const buses = await fetchVehicles(catalogRouteIds);
+    this.legacyPositions = { buses };
+    this.vehicles = buses.map(toVehicle);
   }
 }
 
