@@ -18,12 +18,7 @@ export function feedbackHandler(bodyField: string): RequestHandler {
       res.sendStatus(400);
       return;
     }
-    try {
-      await appendFeedback(feedback.slice(0, MAX_FEEDBACK_LENGTH));
-    } catch {
-      res.sendStatus(500);
-      return;
-    }
+    await appendFeedback(feedback.slice(0, MAX_FEEDBACK_LENGTH));
     res.sendStatus(200);
   };
 }

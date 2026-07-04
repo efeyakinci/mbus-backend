@@ -1,9 +1,8 @@
-import { Router, type Request, type Response } from "express";
+import { Router, type Request } from "express";
 import {
   fetchStopPredictions,
   fetchVehiclePredictions,
   type BustimePredictionsPayload,
-  type Result,
 } from "../bustime/client.ts";
 import { toArrival } from "../bustime/mapping.ts";
 import { catalog, catalogRouteIds } from "../catalog.ts";
@@ -13,16 +12,8 @@ import { vehicleCache } from "../state/vehicleCache.ts";
 import { feedbackHandler, feedbackLimiter } from "./feedback.ts";
 import { sendVehicleIcon } from "./vehicleIcons.ts";
 
-function sendArrivals(
-  result: Result<BustimePredictionsPayload>,
-  res: Response,
-) {
-  if (!result.ok) {
-    res.sendStatus(503);
-    return;
-  }
-  const predictions = result.value["bustime-response"].prd ?? [];
-  res.json({ arrivals: predictions.map(toArrival) });
+function toArrivals(payload: BustimePredictionsPayload) {
+  return { arrivals: (payload["bustime-response"].prd ?? []).map(toArrival) };
 }
 
 export const v4Router = Router();
@@ -42,9 +33,8 @@ v4Router.get("/vehicles", (req, res) => {
 v4Router.get(
   "/stops/:stopId/arrivals",
   async (req: Request<{ stopId: string }>, res) => {
-    sendArrivals(
-      await fetchStopPredictions(req.params.stopId, catalogRouteIds),
-      res,
+    res.json(
+      toArrivals(await fetchStopPredictions(req.params.stopId, catalogRouteIds)),
     );
   },
 );
@@ -52,7 +42,7 @@ v4Router.get(
 v4Router.get(
   "/vehicles/:vehicleId/arrivals",
   async (req: Request<{ vehicleId: string }>, res) => {
-    sendArrivals(await fetchVehiclePredictions(req.params.vehicleId), res);
+    res.json(toArrivals(await fetchVehiclePredictions(req.params.vehicleId)));
   },
 );
 
