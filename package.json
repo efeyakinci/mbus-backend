@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "node --env-file-if-exists=.env src/app.ts",
+    "test": "MBUS_API_KEY=test-key LOG_LEVEL=silent node --test \"src/**/*.test.ts\"",
     "typecheck": "tsc"
   },
   "author": "Efe Akinci",

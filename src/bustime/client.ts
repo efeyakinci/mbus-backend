@@ -18,9 +18,10 @@ export class BustimeUnavailableError extends Error {
 
 /**
  * Raw BusTime wire schemas. Nothing outside src/bustime/ should consume the
- * payloads directly, except the frozen legacy v3 API, which serves some of
- * them verbatim — so schemas are loose and non-coercing: parsing must not
- * drop or transform fields. Numeric fields arrive as numbers or strings
+ * payloads directly, except the frozen legacy v3 API, which preserves their
+ * wire format — so schemas are loose and non-coercing: parsing must not
+ * drop or transform fields. Prediction selection happens after parsing.
+ * Numeric fields arrive as numbers or strings
  * depending on the endpoint.
  */
 const numberLike = z.union([z.number(), z.string()]);
@@ -144,35 +145,42 @@ export async function fetchStopPredictions(
   stopId: string,
   routeIds: string[],
 ): Promise<BustimePredictionsPayload> {
-  return getBustime(
-    "getpredictions",
-    {
-      requestType: "getpredictions",
-      locale: "en",
-      stpid: stopId,
-      rt: routeIds.join(","),
-      rtpidatafeed: "bustime",
-      top: 4,
-    },
-    predictionsPayloadSchema,
-  );
+  return fetchPredictions({ stpid: stopId, rt: routeIds.join(",") });
 }
 
 export async function fetchVehiclePredictions(
   vehicleId: string,
 ): Promise<BustimePredictionsPayload> {
-  return getBustime(
+  return fetchPredictions({ vid: vehicleId, tmres: "s" });
+}
+
+async function fetchPredictions(
+  params: Record<string, string>,
+): Promise<BustimePredictionsPayload> {
+  const payload = await getBustime(
     "getpredictions",
     {
       requestType: "getpredictions",
       locale: "en",
-      vid: vehicleId,
-      top: 4,
-      tmres: "s",
       rtpidatafeed: "bustime",
+      ...params,
     },
     predictionsPayloadSchema,
   );
+
+  const response = payload["bustime-response"];
+  if (!response.prd) return payload;
+
+  // Magic Bus uses an empty vid for scheduled departures without a tracked
+  // vehicle. Those trips may never run. Fetch without top so they cannot
+  // crowd live predictions out of the four arrivals served by either API.
+  return {
+    ...payload,
+    "bustime-response": {
+      ...response,
+      prd: response.prd.filter((prediction) => prediction.vid !== "").slice(0, 4),
+    },
+  };
 }
 
 export async function fetchRoutes(): Promise<BustimeRoutesPayload> {
